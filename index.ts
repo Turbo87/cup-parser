@@ -11,9 +11,9 @@ function parse(str: string): parse.CUPFile {
   let [waypointPart, taskPart] = str.split('-----Related Tasks-----');
 
   let waypoints = parseWaypoints(waypointPart);
-  // let tasks = parseTasks(taskPart);
+  let tasks = parseTasks(taskPart);
 
-  return { waypoints };
+  return { waypoints, tasks };
 }
 
 function parseWaypoints(str: string): parse.Waypoint[] {
@@ -98,10 +98,14 @@ function parseRunwayLength(str: string | undefined): parse.RunwayLength | null {
   return { value, unit };
 }
 
+function parseTasks(src: string): parse.Task[] {
+  return [];
+}
+
 namespace parse {
   export interface CUPFile {
     waypoints: Waypoint[];
-    // tasks: Task[];
+    tasks: Task[];
   }
 
   export interface Waypoint {
@@ -147,6 +151,10 @@ namespace parse {
   export interface RunwayLength {
     value: number;
     unit: 'm' | 'nm' | 'ml';
+  }
+
+  export interface Task {
+
   }
 }
 

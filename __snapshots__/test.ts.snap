@@ -2,6 +2,7 @@
 
 exports[`docs-example.cup 1`] = `
 Object {
+  "tasks": Array [],
   "waypoints": Array [
     Object {
       "code": "LESCE",
@@ -28,6 +29,7 @@ Object {
 
 exports[`euregio9.cup 1`] = `
 Object {
+  "tasks": Array [],
   "waypoints": Array [
     Object {
       "code": "01AACH",
@@ -1760,6 +1762,7 @@ Object {
 
 exports[`test.cup 1`] = `
 Object {
+  "tasks": Array [],
   "waypoints": Array [
     Object {
       "code": "ALTEH",
@@ -3474,6 +3477,7 @@ Object {
 
 exports[`waypoints.cup 1`] = `
 Object {
+  "tasks": Array [],
   "waypoints": Array [
     Object {
       "code": "Aconcagua",
