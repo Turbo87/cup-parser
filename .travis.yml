@@ -5,3 +5,17 @@ node_js:
 script:
   - yarn run lint
   - yarn test -- --coverage
+
+before_deploy:
+  - yarn global add auto-dist-tag
+  - auto-dist-tag --write
+
+deploy:
+  skip_cleanup: true
+  provider: npm
+  email: tobias.bieniek@gmx.de
+  api_key:
+    secure: IDfRMzPhwaG4HAfmFkh7dRcDIok/+89QXtvQACj6MaqWgn7LCcBta7o/dOAWBIGXcS7J3iOaWJUhfqbahCutFWkYCV1nBxBPgg9PW41uw8pyKzZwM6W3bRVYzuK9UPp+sLD2ie9zqhoTDjH14umUe/UmjP5HTMA7u2rinOdFBLcFhOKfx3MjZv+qhM4rpLREOlvpR9jHqGsq5L/OEuFg6Edbk7p7uTnNXq2zzitXiqW+dfHfZJK2olIU4fVtz5xk42yN/ZHVVI4GWf89Gq3Iou1hi2fphiv1ONSWcwX/EzHuyK+4wg9oY3MffXcS+ajf/u4IWd7/c6F3AIfXHQmPZudN0zACjZg04bICaIMnlda9Fn+v5N6qYesvONBvzrJoZjV7Qx6GSWECF40v75WY42T9pjxuxBzfP+zIlOHEpGyiFXQohD56uutttfB7nTtyw5XsK2ZJIsyvHHTNW3dsR3vX9aS83uSeENqJVyBm7nuFLqFUvDsehc4DECXKFxJN+88osUOfNS587XS4FcMyItPb0U1mCOJjTAlq1xikDMexlh1vuRHdRHXkbFpu7hnPP9pviKwcMz2+Rj8jFP22HNG5HwVAzwZNMFhf7B1fUpEFew7JWycVvUbx/hFPPn3HaAA4Z4OqVHJTVP4TwK390Z4SfISBaN2nsfdInXEgZ5I=
+  on:
+    tags: true
+    repo: Turbo87/cup-parser
