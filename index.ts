@@ -27,8 +27,8 @@ function parseWaypoints(str: string): parse.Waypoint[] {
     let name = row[0];
     let code = row[1] || '';
     let country = row[2] || '';
-    let latitude = parseLatitude(row[3]);
-    let longitude = parseLongitude(row[4]);
+    let latitude = parse.parseLatitude(row[3]);
+    let longitude = parse.parseLongitude(row[4]);
     let elevation = row[5] ? parseVDistance(row[5], 'elevation') : null;
     let style = parseWaypointStyle(row[6]);
     let runwayDirection = row[7] ? Number(row[7]) : null;
@@ -50,22 +50,6 @@ function parseWaypoints(str: string): parse.Waypoint[] {
       description,
     };
   }).filter(row => 'name' in row) as parse.Waypoint[];
-}
-
-function parseLatitude(str: string): number {
-  let match = str.match(RE_LAT);
-  if (!match) throw new Error(`Invalid latitude: ${str}`);
-
-  let value = Number(match[1]) + Number(match[2]) / 60;
-  return (match[3] === 'S') ? -value : value;
-}
-
-function parseLongitude(str: string): number {
-  let match = str.match(RE_LON);
-  if (!match) throw new Error(`Invalid longitude: ${str}`);
-
-  let value = Number(match[1]) + Number(match[2]) / 60;
-  return (match[3] === 'W') ? -value : value;
 }
 
 function parseHDistance(str: string | undefined, description: string): parse.HDistance {
@@ -367,6 +351,24 @@ namespace parse {
     } else {
       throw new Error(`Invalid ${description}: ${str}`);
     }
+  }
+
+  export function parseLatitude(str: string): number {
+    let match = str.match(RE_LAT);
+    if (!match) throw new Error(`Invalid latitude: ${str}`);
+
+    let value = Number(match[1]) + Number(match[2]) / 60;
+    if (value > 90) throw new Error(`Invalid latitude: ${str}`);
+    return (match[3] === 'S') ? -value : value;
+  }
+
+  export function parseLongitude(str: string): number {
+    let match = str.match(RE_LON);
+    if (!match) throw new Error(`Invalid longitude: ${str}`);
+
+    let value = Number(match[1]) + Number(match[2]) / 60;
+    if (value > 180) throw new Error(`Invalid longitude: ${str}`);
+    return (match[3] === 'W') ? -value : value;
   }
 }
 

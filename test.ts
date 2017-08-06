@@ -1,4 +1,4 @@
-import {parseBoolean, parseDuration} from './index';
+import {parseBoolean, parseDuration, parseLatitude, parseLongitude} from './index';
 
 import fs = require('fs');
 import parse = require('.');
@@ -75,5 +75,67 @@ describe('parseBoolean()', () => {
 
   it('throws for invalid input', () => {
     expect(() => parseBoolean('foo')).toThrow();
+  });
+});
+
+describe('parseLatitude()', () => {
+  const TESTS = [
+    ['0000.000N', 0],
+    ['0000.000S', 0],
+    ['1234.567N', 12.57612],
+    ['4621.666N', 46.3611],
+    ['4621.666S', -46.3611],
+    ['9000.000N', 90],
+  ];
+
+  for (let [input, expected] of TESTS) {
+    test(`${input} -> ${expected} deg`, () => {
+      expect(parseLatitude(input as string)).toBeCloseTo(expected as number);
+    });
+  }
+
+  it('throws for undefined input', () => {
+    expect(() => parseLatitude(undefined)).toThrow();
+  });
+
+  it('throws for empty input', () => {
+    expect(() => parseLatitude('')).toThrow();
+  });
+
+  it('throws for invalid input', () => {
+    expect(() => parseLatitude('foo')).toThrow();
+    expect(() => parseLatitude('1234.567E')).toThrow();
+    expect(() => parseLatitude('9000.001N')).toThrow();
+  });
+});
+
+describe('parseLongitude()', () => {
+  const TESTS = [
+    ['00000.000E', 0],
+    ['00000.000W', 0],
+    ['12345.678E', 123.7613],
+    ['04621.666E', 46.3611],
+    ['04621.666W', -46.3611],
+    ['18000.000E', 180],
+  ];
+
+  for (let [input, expected] of TESTS) {
+    test(`${input} -> ${expected} deg`, () => {
+      expect(parseLongitude(input as string)).toBeCloseTo(expected as number);
+    });
+  }
+
+  it('throws for undefined input', () => {
+    expect(() => parseLongitude(undefined)).toThrow();
+  });
+
+  it('throws for empty input', () => {
+    expect(() => parseLongitude('')).toThrow();
+  });
+
+  it('throws for invalid input', () => {
+    expect(() => parseLongitude('foo')).toThrow();
+    expect(() => parseLongitude('12345.678S')).toThrow();
+    expect(() => parseLongitude('18000.001E')).toThrow();
   });
 });
