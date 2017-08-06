@@ -6,6 +6,7 @@ const RE_LAT = /(\d{2})(\d{2}\.\d{3})([NS])/;
 const RE_LON = /(\d{3})(\d{2}\.\d{3})([EW])/;
 const RE_VDIS = /(\d+(?:\.\d+)?)(m|ft)/i;
 const RE_HDIS = /(\d+(?:\.\d+)?)(km|ml|nm|m)/i;
+const RE_DURATION = /(?:(?:(\d+):)?(\d+):)?(\d{2})/;
 
 function parse(str: string): parse.CUPFile {
   let [waypointPart, taskPart] = str.split('-----Related Tasks-----');
@@ -216,6 +217,19 @@ namespace parse {
 
     /** Bonus for crossing the finish line */
     bonus?: number;
+  }
+
+  export function parseDuration(str: string | undefined, description: string = 'duration'): number {
+    if (!str) throw new Error(`Invalid ${description}: ${str}`);
+
+    let match = str.match(RE_DURATION);
+    if (!match) throw new Error(`Invalid ${description}: ${str}`);
+
+    let h = match[1] ? Number(match[1]) : 0;
+    let m = match[2] ? Number(match[2]) : 0;
+    let s = Number(match[3]);
+
+    return (h * 60 + m) * 60 + s;
   }
 }
 
