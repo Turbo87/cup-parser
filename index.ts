@@ -154,7 +154,68 @@ namespace parse {
   }
 
   export interface Task {
+    description: string;
+    points: Taskpoint[];
+    options: TaskOptions;
+  }
 
+  export interface Taskpoint {
+    name: string;
+    style?: TaskpointStyle;
+    r1?: number;
+    a1?: number;
+    r2?: number;
+    a2?: number;
+    a12?: number;
+  }
+
+  export enum TaskpointStyle {
+    FixedValue = 0,
+    Symmetrical = 1,
+    ToNextPoint = 2,
+    ToPreviousPoint = 3,
+    ToStartPoint = 4,
+  }
+
+  export interface TaskOptions {
+    /** Opening of start line */
+    noStart?: string;
+
+    /** Designated Time for the task (seconds) */
+    taskTime?: number;
+
+    /** Task distance calculation. False = use fixes, True = use waypoints */
+    wpDis?: boolean;
+
+    /** Distance tolerance */
+    nearDis?: HDistance;
+
+    /** Altitude tolerance */
+    nearAlt?: VDistance;
+
+    /** Uncompleted leg. False = calculate maximum distance from last observation zone. */
+    minDis?: boolean;
+
+    /** if true, then Random order of waypoints is checked */
+    randomOrder?: boolean;
+
+    /** Maximum number of points */
+    maxPts?: number;
+
+    /**
+     * Number of mandatory waypoints at the beginning.
+     * 1 means start line only, two means start line plus first point in task sequence (Task line).
+     */
+    beforePts?: number;
+
+    /**
+     * Number of mandatory waypoints at the end.
+     * 1 means finish line only, two means finish line and one point before finish in task sequence (Task line).
+     */
+    afterPts?: number;
+
+    /** Bonus for crossing the finish line */
+    bonus?: number;
   }
 }
 
