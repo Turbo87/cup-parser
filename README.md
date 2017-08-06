@@ -25,9 +25,9 @@ Usage
 
 ```js
 const fs = require('fs');
-const parse = require('cup-parser');
+const CUPParser = require('cup-parser');
 
-let result = parse(fs.readFileSync('waypoints.cup', 'utf8'));
+let result = CUPParser.parse(fs.readFileSync('waypoints.cup', 'utf8'));
 ```
 
 For more examples have a look at our [test suite](test.ts).

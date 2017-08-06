@@ -8,16 +8,7 @@ const RE_VDIS = /^\s*(\d+(?:\.\d+)?)(m|ft)\s*$/i;
 const RE_HDIS = /^\s*(\d+(?:\.\d+)?)(km|ml|nm|m)\s*$/i;
 const RE_DURATION = /(?:(?:(\d+):)?(\d+):)?(\d{2})/;
 
-function parse(str: string): parse.CUPFile {
-  let [waypointPart, taskPart] = str.split('-----Related Tasks-----');
-
-  let waypoints = parse.parseWaypoints(waypointPart);
-  let tasks = parse.parseTasks(taskPart);
-
-  return { waypoints, tasks };
-}
-
-namespace parse {
+namespace CUPParser {
   export interface CUPFile {
     waypoints: Waypoint[];
     tasks: Task[];
@@ -138,7 +129,16 @@ namespace parse {
     bonus?: number;
   }
 
-  export function parseHDistance(str: string | undefined, description: string = 'distance'): parse.HDistance {
+  export function parse(str: string): CUPFile {
+    let [waypointPart, taskPart] = str.split('-----Related Tasks-----');
+
+    let waypoints = parseWaypoints(waypointPart);
+    let tasks = parseTasks(taskPart);
+
+    return { waypoints, tasks };
+  }
+
+  export function parseHDistance(str: string | undefined, description: string = 'distance'): HDistance {
     if (!str) throw new Error(`Invalid ${description}: ${str}`);
 
     let match = str.match(RE_HDIS);
@@ -150,7 +150,7 @@ namespace parse {
     return { value, unit };
   }
 
-  export function parseVDistance(str: string | undefined, description: string = 'vertical distance'): parse.VDistance {
+  export function parseVDistance(str: string | undefined, description: string = 'vertical distance'): VDistance {
     if (!str) throw new Error(`Invalid ${description}: ${str}`);
 
     let match = str.match(RE_VDIS);
@@ -372,4 +372,4 @@ namespace parse {
   }
 }
 
-export = parse;
+export = CUPParser;

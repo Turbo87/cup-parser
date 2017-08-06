@@ -1,7 +1,14 @@
-import {parseBoolean, parseDuration, parseHDistance, parseLatitude, parseLongitude, parseVDistance} from './index';
+import {
+  parse,
+  parseBoolean,
+  parseDuration,
+  parseHDistance,
+  parseLatitude,
+  parseLongitude,
+  parseVDistance,
+} from './index';
 
 import fs = require('fs');
-import parse = require('.');
 
 const DATA_PATH = `${__dirname}/data`;
 
