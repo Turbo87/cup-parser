@@ -1,4 +1,4 @@
-import {parseBoolean, parseDuration, parseLatitude, parseLongitude} from './index';
+import {parseBoolean, parseDuration, parseHDistance, parseLatitude, parseLongitude, parseVDistance} from './index';
 
 import fs = require('fs');
 import parse = require('.');
@@ -14,6 +14,70 @@ for (let filename of files) {
     expect(result).toMatchSnapshot(filename);
   });
 }
+
+describe('parseHDistance()', () => {
+  const TESTS = [
+    ['0m', { value: 0, unit: 'm' }],
+    ['1m', { value: 1, unit: 'm' }],
+    ['1.2m', { value: 1.2, unit: 'm' }],
+    ['12345m', { value: 12345, unit: 'm' }],
+    ['12.345km', { value: 12.345, unit: 'km' }],
+    ['4.2nm', { value: 4.2, unit: 'nm' }],
+    ['4.2ml', { value: 4.2, unit: 'ml' }],
+  ];
+
+  for (let [input, expected] of TESTS) {
+    test(`${input} -> ${JSON.stringify(expected)}`, () => {
+      expect(parseHDistance(input as string)).toEqual(expected);
+    });
+  }
+
+  it('throws for undefined input', () => {
+    expect(() => parseHDistance(undefined)).toThrow();
+  });
+
+  it('throws for empty input', () => {
+    expect(() => parseHDistance('')).toThrow();
+  });
+
+  it('throws for invalid input', () => {
+    expect(() => parseHDistance('1.2ft')).toThrow();
+    expect(() => parseHDistance('m')).toThrow();
+    expect(() => parseHDistance('1.2.3m')).toThrow();
+  });
+});
+
+describe('parseVDistance()', () => {
+  const TESTS = [
+    ['0m', { value: 0, unit: 'm' }],
+    ['1m', { value: 1, unit: 'm' }],
+    ['1.2m', { value: 1.2, unit: 'm' }],
+    ['12345m', { value: 12345, unit: 'm' }],
+    ['12.345ft', { value: 12.345, unit: 'ft' }],
+  ];
+
+  for (let [input, expected] of TESTS) {
+    test(`${input} -> ${JSON.stringify(expected)}`, () => {
+      expect(parseVDistance(input as string)).toEqual(expected);
+    });
+  }
+
+  it('throws for undefined input', () => {
+    expect(() => parseVDistance(undefined)).toThrow();
+  });
+
+  it('throws for empty input', () => {
+    expect(() => parseVDistance('')).toThrow();
+  });
+
+  it('throws for invalid input', () => {
+    expect(() => parseVDistance('1.2nm')).toThrow();
+    expect(() => parseVDistance('1.2km')).toThrow();
+    expect(() => parseVDistance('1.2ml')).toThrow();
+    expect(() => parseVDistance('m')).toThrow();
+    expect(() => parseVDistance('1.2.3m')).toThrow();
+  });
+});
 
 describe('parseDuration()', () => {
   const TESTS = [

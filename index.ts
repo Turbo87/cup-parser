@@ -4,8 +4,8 @@ const csv = dsvFormat(',');
 
 const RE_LAT = /(\d{2})(\d{2}\.\d{3})([NS])/;
 const RE_LON = /(\d{3})(\d{2}\.\d{3})([EW])/;
-const RE_VDIS = /(\d+(?:\.\d+)?)(m|ft)/i;
-const RE_HDIS = /(\d+(?:\.\d+)?)(km|ml|nm|m)/i;
+const RE_VDIS = /^\s*(\d+(?:\.\d+)?)(m|ft)\s*$/i;
+const RE_HDIS = /^\s*(\d+(?:\.\d+)?)(km|ml|nm|m)\s*$/i;
 const RE_DURATION = /(?:(?:(\d+):)?(\d+):)?(\d{2})/;
 
 function parse(str: string): parse.CUPFile {
@@ -29,10 +29,10 @@ function parseWaypoints(str: string): parse.Waypoint[] {
     let country = row[2] || '';
     let latitude = parse.parseLatitude(row[3]);
     let longitude = parse.parseLongitude(row[4]);
-    let elevation = row[5] ? parseVDistance(row[5], 'elevation') : null;
+    let elevation = row[5] ? parse.parseVDistance(row[5], 'elevation') : null;
     let style = parseWaypointStyle(row[6]);
     let runwayDirection = row[7] ? Number(row[7]) : null;
-    let runwayLength = row[8] ? parseHDistance(row[8], 'runway length') : null;
+    let runwayLength = row[8] ? parse.parseHDistance(row[8], 'runway length') : null;
     let frequency = row[9] || null;
     let description = row[10] || '';
 
@@ -50,30 +50,6 @@ function parseWaypoints(str: string): parse.Waypoint[] {
       description,
     };
   }).filter(row => 'name' in row) as parse.Waypoint[];
-}
-
-function parseHDistance(str: string | undefined, description: string): parse.HDistance {
-  if (!str) throw new Error(`Invalid ${description}: ${str}`);
-
-  let match = str.match(RE_HDIS);
-  if (!match) throw new Error(`Invalid ${description}: ${str}`);
-
-  let value = Number(match[1]);
-  let unit = match[2].toLowerCase() as ('m' | 'km' | 'nm' | 'ml');
-
-  return { value, unit };
-}
-
-function parseVDistance(str: string | undefined, description: string): parse.VDistance {
-  if (!str) throw new Error(`Invalid ${description}: ${str}`);
-
-  let match = str.match(RE_VDIS);
-  if (!match) throw new Error(`Invalid ${description}: ${str}`);
-
-  let value = Number(match[1]);
-  let unit = match[2].toLowerCase() as ('m' | 'ft');
-
-  return { value, unit };
 }
 
 function parseWaypointStyle(str: string | undefined): parse.WaypointStyle {
@@ -134,10 +110,10 @@ function parseTaskOptions(columns: string[]): parse.TaskOptions {
       options.wpDis = parse.parseBoolean(value);
 
     } else if (name === 'NearDis') {
-      options.nearDis = parseHDistance(value, name);
+      options.nearDis = parse.parseHDistance(value, name);
 
     } else if (name === 'NearAlt') {
-      options.nearAlt = parseVDistance(value, name);
+      options.nearAlt = parse.parseVDistance(value, name);
 
     } else if (name === 'MinDis') {
       options.minDis = parse.parseBoolean(value);
@@ -174,7 +150,7 @@ function parseTaskpointOptions(columns: string[]): parse.TaskpointOptions {
       }
 
     } else if (name === 'R1') {
-      let r1 = parseHDistance(value, 'R1');
+      let r1 = parse.parseHDistance(value, 'R1');
       if (!r1) throw new Error(`Invalid ${name}: ${value}`);
       options.r1 = r1;
 
@@ -184,7 +160,7 @@ function parseTaskpointOptions(columns: string[]): parse.TaskpointOptions {
       options.a12 = num;
 
     } else if (name === 'R2') {
-      let r2 = parseHDistance(value, 'R2');
+      let r2 = parse.parseHDistance(value, 'R2');
       if (!r2) throw new Error(`Invalid ${name}: ${value}`);
       options.r2 = r2;
 
@@ -325,6 +301,30 @@ namespace parse {
 
     /** Bonus for crossing the finish line */
     bonus?: number;
+  }
+
+  export function parseHDistance(str: string | undefined, description: string = 'distance'): parse.HDistance {
+    if (!str) throw new Error(`Invalid ${description}: ${str}`);
+
+    let match = str.match(RE_HDIS);
+    if (!match) throw new Error(`Invalid ${description}: ${str}`);
+
+    let value = Number(match[1]);
+    let unit = match[2].toLowerCase() as ('m' | 'km' | 'nm' | 'ml');
+
+    return { value, unit };
+  }
+
+  export function parseVDistance(str: string | undefined, description: string = 'vertical distance'): parse.VDistance {
+    if (!str) throw new Error(`Invalid ${description}: ${str}`);
+
+    let match = str.match(RE_VDIS);
+    if (!match) throw new Error(`Invalid ${description}: ${str}`);
+
+    let value = Number(match[1]);
+    let unit = match[2].toLowerCase() as ('m' | 'ft');
+
+    return { value, unit };
   }
 
   export function parseDuration(str: string | undefined, description: string = 'duration'): number {
