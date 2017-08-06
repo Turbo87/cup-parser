@@ -4,8 +4,8 @@ const csv = dsvFormat(',');
 
 const RE_LAT = /(\d{2})(\d{2}\.\d{3})([NS])/;
 const RE_LON = /(\d{3})(\d{2}\.\d{3})([EW])/;
-const RE_ELEV = /(\d+(?:\.\d+)?)(m|ft)/i;
-const RE_RW_LEN = /(\d+(?:\.\d+)?)(ml?|nm)/i;
+const RE_VDIS = /(\d+(?:\.\d+)?)(m|ft)/i;
+const RE_HDIS = /(\d+(?:\.\d+)?)(km|ml|nm|m)/i;
 
 function parse(str: string): parse.CUPFile {
   let [waypointPart, taskPart] = str.split('-----Related Tasks-----');
@@ -28,10 +28,10 @@ function parseWaypoints(str: string): parse.Waypoint[] {
     let country = row[2] || '';
     let latitude = parseLatitude(row[3]);
     let longitude = parseLongitude(row[4]);
-    let elevation = parseElevation(row[5]);
+    let elevation = parseVDistance(row[5], 'elevation');
     let style = parseWaypointStyle(row[6]);
     let runwayDirection = row[7] ? Number(row[7]) : null;
-    let runwayLength = parseRunwayLength(row[8]);
+    let runwayLength = parseHDistance(row[8], 'runway length');
     let frequency = row[9] || null;
     let description = row[10] || '';
 
@@ -67,11 +67,23 @@ function parseLongitude(str: string): number {
   return (match[3] === 'W') ? -value : value;
 }
 
-function parseElevation(str: string | undefined): parse.Elevation | null {
+function parseHDistance(str: string | undefined, description: string): parse.HDistance | null {
   if (!str) return null;
 
-  let match = str.match(RE_ELEV);
-  if (!match) throw new Error(`Invalid elevation: ${str}`);
+  let match = str.match(RE_HDIS);
+  if (!match) throw new Error(`Invalid ${description}: ${str}`);
+
+  let value = Number(match[1]);
+  let unit = match[2].toLowerCase() as ('m' | 'km' | 'nm' | 'ml');
+
+  return { value, unit };
+}
+
+function parseVDistance(str: string | undefined, description: string): parse.VDistance | null {
+  if (!str) return null;
+
+  let match = str.match(RE_VDIS);
+  if (!match) throw new Error(`Invalid ${description}: ${str}`);
 
   let value = Number(match[1]);
   let unit = match[2].toLowerCase() as ('m' | 'ft');
@@ -84,18 +96,6 @@ function parseWaypointStyle(str: string | undefined): parse.WaypointStyle {
 
   let value = Number(str);
   return value < 1 || value > 17 ? parse.WaypointStyle.Unknown : value;
-}
-
-function parseRunwayLength(str: string | undefined): parse.RunwayLength | null {
-  if (!str) return null;
-
-  let match = str.match(RE_RW_LEN);
-  if (!match) throw new Error(`Invalid runway length: ${str}`);
-
-  let value = Number(match[1]);
-  let unit = match[2].toLowerCase() as ('m' | 'nm' | 'ml');
-
-  return { value, unit };
 }
 
 function parseTasks(src: string): parse.Task[] {
@@ -114,15 +114,20 @@ namespace parse {
     country: string;
     latitude: number;
     longitude: number;
-    elevation: Elevation | null;
+    elevation: VDistance | null;
     style: WaypointStyle;
     runwayDirection: number | null;
-    runwayLength: RunwayLength;
+    runwayLength: HDistance | null;
     frequency: string | null;
     description: string;
   }
 
-  export interface Elevation {
+  export interface HDistance {
+    value: number;
+    unit: 'm' | 'km' | 'nm' | 'ml';
+  }
+
+  export interface VDistance {
     value: number;
     unit: 'm' | 'ft';
   }
@@ -146,11 +151,6 @@ namespace parse {
     PowerPlant = 15,
     Castle = 16,
     Intersection = 17,
-  }
-
-  export interface RunwayLength {
-    value: number;
-    unit: 'm' | 'nm' | 'ml';
   }
 
   export interface Task {
