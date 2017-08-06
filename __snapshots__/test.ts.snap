@@ -2,7 +2,105 @@
 
 exports[`docs-example.cup 1`] = `
 Object {
-  "tasks": Array [],
+  "tasks": Array [
+    Object {
+      "description": "1000km FAI Triangle",
+      "options": Object {
+        "nearAlt": Object {
+          "unit": "m",
+          "value": 300,
+        },
+        "nearDis": Object {
+          "unit": "km",
+          "value": 0.7,
+        },
+        "noStart": "12:34:56",
+        "taskTime": 6312,
+        "wpDis": false,
+      },
+      "points": Array [
+        Object {
+          "name": "0LESCE",
+          "options": Object {
+            "a12": 180,
+            "line": true,
+            "r1": Object {
+              "unit": "m",
+              "value": 400,
+            },
+            "style": 2,
+          },
+        },
+        Object {
+          "name": "Sv Peter",
+          "options": Object {
+            "a12": 123.4,
+            "line": false,
+            "r1": Object {
+              "unit": "m",
+              "value": 35000,
+            },
+            "r2": Object {
+              "unit": "m",
+              "value": 12000,
+            },
+            "style": 0,
+          },
+        },
+        Object {
+          "name": "1K MAIER",
+          "options": Object {
+            "a12": 180,
+            "line": true,
+            "r1": Object {
+              "unit": "m",
+              "value": 2000,
+            },
+            "style": 3,
+          },
+        },
+        Object {
+          "name": "1K ZELTW",
+        },
+        Object {
+          "name": "1K UDBIN",
+        },
+        Object {
+          "name": "Sv Peter",
+        },
+        Object {
+          "name": "0LESCE",
+        },
+      ],
+    },
+    Object {
+      "description": "",
+      "options": Object {},
+      "points": Array [
+        Object {
+          "name": "0LESCE",
+        },
+        Object {
+          "name": "0Start",
+        },
+        Object {
+          "name": "750 Huje",
+        },
+        Object {
+          "name": "750 Brenner",
+        },
+        Object {
+          "name": "750 Gahns",
+        },
+        Object {
+          "name": "0Start",
+        },
+        Object {
+          "name": "0LESCE",
+        },
+      ],
+    },
+  ],
   "waypoints": Array [
     Object {
       "code": "LESCE",

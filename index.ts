@@ -29,10 +29,10 @@ function parseWaypoints(str: string): parse.Waypoint[] {
     let country = row[2] || '';
     let latitude = parseLatitude(row[3]);
     let longitude = parseLongitude(row[4]);
-    let elevation = parseVDistance(row[5], 'elevation');
+    let elevation = row[5] ? parseVDistance(row[5], 'elevation') : null;
     let style = parseWaypointStyle(row[6]);
     let runwayDirection = row[7] ? Number(row[7]) : null;
-    let runwayLength = parseHDistance(row[8], 'runway length');
+    let runwayLength = row[8] ? parseHDistance(row[8], 'runway length') : null;
     let frequency = row[9] || null;
     let description = row[10] || '';
 
@@ -68,8 +68,8 @@ function parseLongitude(str: string): number {
   return (match[3] === 'W') ? -value : value;
 }
 
-function parseHDistance(str: string | undefined, description: string): parse.HDistance | null {
-  if (!str) return null;
+function parseHDistance(str: string | undefined, description: string): parse.HDistance {
+  if (!str) throw new Error(`Invalid ${description}: ${str}`);
 
   let match = str.match(RE_HDIS);
   if (!match) throw new Error(`Invalid ${description}: ${str}`);
@@ -80,8 +80,8 @@ function parseHDistance(str: string | undefined, description: string): parse.HDi
   return { value, unit };
 }
 
-function parseVDistance(str: string | undefined, description: string): parse.VDistance | null {
-  if (!str) return null;
+function parseVDistance(str: string | undefined, description: string): parse.VDistance {
+  if (!str) throw new Error(`Invalid ${description}: ${str}`);
 
   let match = str.match(RE_VDIS);
   if (!match) throw new Error(`Invalid ${description}: ${str}`);
@@ -99,8 +99,127 @@ function parseWaypointStyle(str: string | undefined): parse.WaypointStyle {
   return value < 1 || value > 17 ? parse.WaypointStyle.Unknown : value;
 }
 
-function parseTasks(src: string): parse.Task[] {
-  return [];
+function parseTasks(str: string): parse.Task[] {
+  if (!str) return [];
+
+  let rows = csv.parseRows(str);
+  let tasks: parse.Task[] = [];
+  for (let row of rows) {
+    if (row[0] === 'Options') {
+      let lastTask = tasks[tasks.length - 1];
+      if (!lastTask) throw new Error(`Missing task for "Options" line`);
+
+      lastTask.options = parseTaskOptions(row);
+
+    } else if (row[0].indexOf('ObsZone=') === 0) {
+      let lastTask = tasks[tasks.length - 1];
+      if (!lastTask) throw new Error(`Missing task for "ObsZone" line`);
+
+      let pointIndex = Number(row[0].slice(8));
+      let point = lastTask.points[pointIndex];
+      if (!point) throw new Error(`Missing point for "ObsZone" line`);
+
+      point.options = parseTaskpointOptions(row);
+
+    } else {
+      let description = row[0] || '';
+      let names = row.slice(1).filter(Boolean);
+      if (names.length === 0) continue;
+
+      let points = names.map(name => ({ name } as parse.Taskpoint));
+
+      tasks.push({ description, points, options: {} });
+    }
+  }
+
+  return tasks;
+}
+
+function parseTaskOptions(columns: string[]): parse.TaskOptions {
+  let options: parse.TaskOptions = {};
+
+  for (let column of columns) {
+    let [name, value] = column.split('=');
+    if (name === 'NoStart') {
+      options.noStart = value;
+
+    } else if (name === 'TaskTime') {
+      options.taskTime = parse.parseDuration(value);
+
+    } else if (name === 'WpDis') {
+      options.wpDis = parse.parseBoolean(value);
+
+    } else if (name === 'NearDis') {
+      options.nearDis = parseHDistance(value, name);
+
+    } else if (name === 'NearAlt') {
+      options.nearAlt = parseVDistance(value, name);
+
+    } else if (name === 'MinDis') {
+      options.minDis = parse.parseBoolean(value);
+
+    } else if (name === 'RandomOrder') {
+      options.randomOrder = parse.parseBoolean(value);
+
+    } else if (name === 'MaxPts') {
+      options.maxPts = Number(value);
+
+    } else if (name === 'BeforePts') {
+      options.beforePts = Number(value);
+
+    } else if (name === 'AfterPts') {
+      options.afterPts = Number(value);
+
+    } else if (name === 'Bonus') {
+      options.bonus = Number(value);
+    }
+  }
+
+  return options;
+}
+
+function parseTaskpointOptions(columns: string[]): parse.TaskpointOptions {
+  let options: parse.TaskpointOptions = { line: false };
+
+  for (let column of columns) {
+    let [name, value] = column.split('=');
+    if (name === 'Style' && value) {
+      let style = Number(value);
+      if (style >= 0 && style <= 4) {
+        options.style = style;
+      }
+
+    } else if (name === 'R1') {
+      let r1 = parseHDistance(value, 'R1');
+      if (!r1) throw new Error(`Invalid ${name}: ${value}`);
+      options.r1 = r1;
+
+    } else if (name === 'A1') {
+      let num = Number(value);
+      if (isNaN(num)) throw new Error(`Invalid ${name}: ${value}`);
+      options.a12 = num;
+
+    } else if (name === 'R2') {
+      let r2 = parseHDistance(value, 'R2');
+      if (!r2) throw new Error(`Invalid ${name}: ${value}`);
+      options.r2 = r2;
+
+    } else if (name === 'A2') {
+      let num = Number(value);
+      if (isNaN(num)) throw new Error(`Invalid ${name}: ${value}`);
+      options.a12 = num;
+
+    } else if (name === 'A12') {
+      let num = Number(value);
+      if (isNaN(num)) throw new Error(`Invalid ${name}: ${value}`);
+      options.a12 = num;
+
+    } else if (name === 'Line' && value === '1') {
+      options.line = true;
+    }
+  }
+
+  return options;
 }
 
 namespace parse {
@@ -162,12 +281,17 @@ namespace parse {
 
   export interface Taskpoint {
     name: string;
+    options?: TaskpointOptions;
+  }
+
+  export interface TaskpointOptions {
     style?: TaskpointStyle;
-    r1?: number;
+    r1?: HDistance;
     a1?: number;
-    r2?: number;
+    r2?: HDistance;
     a2?: number;
     a12?: number;
+    line: boolean;
   }
 
   export enum TaskpointStyle {
@@ -230,6 +354,19 @@ namespace parse {
     let s = Number(match[3]);
 
     return (h * 60 + m) * 60 + s;
+  }
+
+  export function parseBoolean(str: string | undefined, description: string = 'boolean'): boolean {
+    if (!str) throw new Error(`Invalid ${description}: ${str}`);
+
+    let value = str.toLowerCase().trim();
+    if (value === 'true') {
+      return true;
+    } else if (value === 'false') {
+      return false;
+    } else {
+      throw new Error(`Invalid ${description}: ${str}`);
+    }
   }
 }
 

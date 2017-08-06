@@ -1,4 +1,4 @@
-import {parseDuration} from './index';
+import {parseBoolean, parseDuration} from './index';
 
 import fs = require('fs');
 import parse = require('.');
@@ -46,5 +46,34 @@ describe('parseDuration()', () => {
 
   it('throws for invalid input', () => {
     expect(() => parseDuration('ab:cd:de')).toThrow();
+  });
+});
+
+describe('parseBoolean()', () => {
+  const TESTS = [
+    ['true', true],
+    ['True', true],
+    ['TRUE', true],
+    ['false', false],
+    ['False', false],
+    ['FALSE', false],
+  ];
+
+  for (let [input, expected] of TESTS) {
+    test(`${input} -> ${expected}`, () => {
+      expect(parseBoolean(input as string)).toEqual(expected);
+    });
+  }
+
+  it('throws for undefined input', () => {
+    expect(() => parseBoolean(undefined)).toThrow();
+  });
+
+  it('throws for empty input', () => {
+    expect(() => parseBoolean('')).toThrow();
+  });
+
+  it('throws for invalid input', () => {
+    expect(() => parseBoolean('foo')).toThrow();
   });
 });
