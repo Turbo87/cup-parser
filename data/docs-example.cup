@@ -1,0 +1,10 @@
+name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc
+"Lesce-Bled","LESCE",SI,4621.666N,01410.332E,505.2m,2,130,1140.0m,"123.50","Home airfield"
+-----Related Tasks-----
+"1000km FAI Triangle","0LESCE","Sv Peter","1K MAIER","1K ZELTW","1K UDBIN","Sv Peter","0LESCE"
+Options,NoStart=12:34:56,TaskTime=01:45:12,WpDis=False,NearDis=0.7km,NearAlt=300.0m
+ObsZone=0,Style=2,R1=400m,A1=180,Line=1
+ObsZone=1,Style=0,R1=35000m,A1=30,R2=12000m,A2=12,A12=123.4
+ObsZone=2,Style=3,R1=2000m,A1=180,Line=1
+,"0LESCE","0Start","750 Huje","750 Brenner","750 Gahns","0Start","0LESCE",
+

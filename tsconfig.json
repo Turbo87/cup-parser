@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "declaration": true,
+    "lib": ["ES6"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "noEmitOnError": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES5"
+  },
+  "files": [
+    "index.ts"
+  ]
+}

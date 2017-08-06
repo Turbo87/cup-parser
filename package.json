@@ -1,0 +1,46 @@
+{
+  "name": "cup-parser",
+  "version": "0.0.0",
+  "description": "CUP waypoint and task file parser",
+  "license": "MIT",
+  "author": "Tobias Bieniek <tobias.bieniek@gmail.com>",
+  "files": [
+    "index.js",
+    "index.js.map",
+    "index.d.ts"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": "https://github.com/Turbo87/cup-parser",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc",
+    "lint": "tslint --project . --format stylish",
+    "test": "jest",
+    "test:watch": "jest --watchAll --notify"
+  },
+  "dependencies": {
+    "d3-dsv": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/d3-dsv": "^1.0.30",
+    "@types/jest": "^20.0.3",
+    "@types/node": "^6.0.83",
+    "jest": "^20.0.4",
+    "ts-jest": "^20.0.7",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1"
+  },
+  "jest": {
+    "mapCoverage": true,
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ],
+    "testRegex": "test.ts$",
+    "transform": {
+      "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
+  }
+}
