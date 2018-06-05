@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`docs-example.cup 1`] = `
+exports[`parse() docs-example.cup: docs-example.cup 1`] = `
 Object {
   "tasks": Array [
     Object {
@@ -125,7 +125,7 @@ Object {
 }
 `;
 
-exports[`euregio9.cup 1`] = `
+exports[`parse() euregio9.cup: euregio9.cup 1`] = `
 Object {
   "tasks": Array [],
   "waypoints": Array [
@@ -1858,7 +1858,7 @@ Object {
 }
 `;
 
-exports[`test.cup 1`] = `
+exports[`parse() test.cup: test.cup 1`] = `
 Object {
   "tasks": Array [],
   "waypoints": Array [
@@ -3573,7 +3573,7 @@ Object {
 }
 `;
 
-exports[`waypoints.cup 1`] = `
+exports[`parse() waypoints.cup: waypoints.cup 1`] = `
 Object {
   "tasks": Array [],
   "waypoints": Array [
