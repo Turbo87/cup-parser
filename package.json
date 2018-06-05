@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/d3-dsv": "^1.0.30",
-    "@types/jest": "^20.0.3",
+    "@types/jest": "^23.0.0",
     "@types/node": "^6.0.83",
     "jest": "^20.0.4",
     "ts-jest": "^20.0.7",
