@@ -168,7 +168,7 @@ describe('parseLatitude()', () => {
   }
 
   it('throws for undefined input', () => {
-    expect(() => parseLatitude(undefined)).toThrow();
+    expect(() => parseLatitude(undefined as any)).toThrow();
   });
 
   it('throws for empty input', () => {
@@ -199,7 +199,7 @@ describe('parseLongitude()', () => {
   }
 
   it('throws for undefined input', () => {
-    expect(() => parseLongitude(undefined)).toThrow();
+    expect(() => parseLongitude(undefined as any)).toThrow();
   });
 
   it('throws for empty input', () => {
