@@ -6,7 +6,7 @@ namespace CUPParser {
   const RE_LAT = /(\d{2})(\d{2}\.\d{3})([NS])/;
   const RE_LON = /(\d{3})(\d{2}\.\d{3})([EW])/;
   const RE_VDIS = /^\s*(\d+(?:\.\d+)?)(m|ft)\s*$/i;
-  const RE_HDIS = /^\s*(\d+(?:\.\d+)?)(km|ml|nm|m)\s*$/i;
+  const RE_HDIS = /^\s*(\d+(?:\.\d+)?)(km|ml|nm|m|ft)\s*$/i;
   const RE_DURATION = /(?:(?:(\d+):)?(\d+):)?(\d{2})/;
 
   export interface CUPFile {
@@ -30,7 +30,7 @@ namespace CUPParser {
 
   export interface HDistance {
     value: number;
-    unit: 'm' | 'km' | 'nm' | 'ml';
+    unit: 'm' | 'km' | 'nm' | 'ml' | 'ft';
   }
 
   export interface VDistance {

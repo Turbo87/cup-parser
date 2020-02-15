@@ -33,6 +33,8 @@ describe('parseHDistance()', () => {
     ['12.345km', { value: 12.345, unit: 'km' }],
     ['4.2nm', { value: 4.2, unit: 'nm' }],
     ['4.2ml', { value: 4.2, unit: 'ml' }],
+    ['3280ft', { value: 3280, unit: 'ft' }],
+    ['32.8ft', { value: 32.8, unit: 'ft' }],
   ];
 
   for (let [input, expected] of TESTS) {
@@ -50,7 +52,6 @@ describe('parseHDistance()', () => {
   });
 
   it('throws for invalid input', () => {
-    expect(() => parseHDistance('1.2ft')).toThrow();
     expect(() => parseHDistance('m')).toThrow();
     expect(() => parseHDistance('1.2.3m')).toThrow();
   });
